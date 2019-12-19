@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
+import Modal from 'react-modal';
 import Pet from './Pet';
 import './index.css';
-import { getSnapshotData } from 'jest-snapshot/build/utils';
+//import { getSnapshotData } from 'jest-snapshot/build/utils';
 
 const App = () => {
   const [pets, setPets] = useState([]);
+  const [isNetPetOpen, setNewPetOpen] = useState(
+    false
+  );
   const [isLoading, setLoading] = useState(false);
   
   useEffect(() => {
@@ -38,14 +42,21 @@ const App = () => {
             </li>
           ))}
         </ul>
-        <button>Add a Pet</button>
+        <button onClick={() => setNewPetOpen(true)}>Add a Pet</button>
         </>
       )}
+      <Modal 
+        isOpen = {isNetPetOpen}
+        onRequestClose={() => setNewPetOpen(false)}
+        >Hello</Modal>
     </main>
   );
 };
 
+const el = document.querySelector('#root');
+Modal.setAppElement(el);
+
 ReactDOM.render(
   <App />,
-  document.querySelector('#root')
+  el
 );
