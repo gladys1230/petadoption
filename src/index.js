@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import Modal from 'react-modal';
+import NewPetModal from './NewPetModal';
 import Pet from './Pet';
 import './index.css';
 //import { getSnapshotData } from 'jest-snapshot/build/utils';
@@ -45,18 +46,14 @@ const App = () => {
         <button onClick={() => setNewPetOpen(true)}>Add a Pet</button>
         </>
       )}
-      <Modal 
-        isOpen = {isNetPetOpen}
-        onRequestClose={() => setNewPetOpen(false)}
-        >Hello</Modal>
+      <NewPetModal
+        isOpen={isNetPetOpen}
+        onCancel={() => setNewPetOpen(false)}
+      />
     </main>
   );
 };
 
 const el = document.querySelector('#root');
 Modal.setAppElement(el);
-
-ReactDOM.render(
-  <App />,
-  el
-);
+ReactDOM.render(<App />,el);
