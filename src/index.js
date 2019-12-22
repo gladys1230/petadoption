@@ -8,19 +8,12 @@ import './index.css';
 
 const App = () => {
   const [pets, setPets] = useState([]);
-  const [isNetPetOpen, setNewPetOpen] = useState(
+  const [isNewPetOpen, setNewPetOpen] = useState(
     false
   );
   const [isLoading, setLoading] = useState(false);
   
   useEffect(() => {
-
-    /*async function getData() {
-      const res = await fetch('http://localhost:3001/pets');
-      const pets = await res.json();
-      setPets(pets);
-    }
-    getData();*/
 
     setLoading(true);
     fetch('http://localhost:3001/pets')
@@ -29,6 +22,20 @@ const App = () => {
     .finally(() => setLoading(false));
 
   }, []);
+
+  const addPet = async ({ name, kind, photo }) => {
+    setPets([
+      ...pets,
+      {
+        id: Math.random(),
+        name,
+        kind,
+        photo
+      }
+    ]);
+    setNewPetOpen(false);
+  };
+  
   return (
     <main>
       <h1>Adopt-a-Pet</h1>
@@ -46,10 +53,10 @@ const App = () => {
         <button onClick={() => setNewPetOpen(true)}>Add a Pet</button>
         </>
       )}
-      {isNetPetOpen && (
+      {isNewPetOpen && (
         <NewPetModal
-          isOpen={isNetPetOpen}
           onCancel={() => setNewPetOpen(false)}
+          onSave={addPet}
         />
       )}
     </main>

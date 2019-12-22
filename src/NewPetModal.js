@@ -1,7 +1,7 @@
 import React, {useState, useRef } from 'react';
 import Modal from 'react-modal';
 
-const NewPetModal = ({onCancel}) => {
+const NewPetModal = ({onCancel, onSave}) => {
   const [name, setName] = useState('');
   const [kind, setKind] = useState('');
   const [photo, setPhoto] = useState(null);
@@ -19,12 +19,19 @@ const NewPetModal = ({onCancel}) => {
       reader.readAsDataURL(file);
     }
   };
-
+  const submit = event => {
+    event.preventDefault();
+    onSave({
+      name,
+      kind,
+      photo
+    });
+  };
   return(
     <Modal isOpen = {true} onRequestClose={(onCancel)}>
 
       <h2>New Pet</h2>
-      <form className="pet-form">
+      <form className="pet-form" onSubmit={submit}>
         {photo && <img alt="the pet" src = {photo} />}
         <label htmlFor="photo">Photo</label>
         <input
