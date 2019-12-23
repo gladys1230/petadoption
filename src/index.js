@@ -4,7 +4,7 @@ import Modal from 'react-modal';
 import NewPetModal from './NewPetModal';
 import Pet from './Pet';
 import './index.css';
-//import { getSnapshotData } from 'jest-snapshot/build/utils';
+import { listPets, createPet } from './api';
 
 const App = () => {
   const [pets, setPets] = useState([]);
@@ -12,45 +12,38 @@ const App = () => {
     false
   );
   const [isLoading, setLoading] = useState(false);
-  
+
   useEffect(() => {
-
     setLoading(true);
-    fetch('http://localhost:3001/pets')
-    .then(res => res.json())
-    .then(pets => setPets(pets))
-    .finally(() => setLoading(false));
-
+    listPets()
+      .then(pets => setPets(pets))
+      .finally(() => setLoading(false));
   }, []);
 
-  const addPet = async ({ name, kind, photo }) => {
-    setPets([
-      ...pets,
-      {
-        id: Math.random(),
-        name,
-        kind,
-        photo
-      }
-    ]);
-    setNewPetOpen(false);
+  const addPet = async (pet) => {
+    return createPet(pet).then(newPet => {
+      setPets([...pets, newPet]);
+      setNewPetOpen(false);
+    });
   };
-  
+
   return (
     <main>
       <h1>Adopt-a-Pet</h1>
       {isLoading ? (
-        <div className="loading"> Loading...</div>
+        <div className="loading">Loading...</div>
       ) : (
         <>
-        <ul>
-          {pets.map(pet => (
-            <li key={pet.id}>
-              <Pet pet={pet} />
-            </li>
-          ))}
-        </ul>
-        <button onClick={() => setNewPetOpen(true)}>Add a Pet</button>
+          <ul>
+            {pets.map(pet => (
+              <li key={pet.id}>
+                <Pet pet={pet} />
+              </li>
+            ))}
+          </ul>
+          <button onClick={() => setNewPetOpen(true)}>
+            Add a Pet
+          </button>
         </>
       )}
       {isNewPetOpen && (
@@ -65,4 +58,4 @@ const App = () => {
 
 const el = document.querySelector('#root');
 Modal.setAppElement(el);
-ReactDOM.render(<App />,el);
+ReactDOM.render(<App />, el);
