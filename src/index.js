@@ -2,15 +2,20 @@ import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import Modal from 'react-modal';
 import NewPetModal from './NewPetModal';
+import EditPetModal from './EditPetModal';
 import Pet from './Pet';
+import { listPets, createPet, updatePet } from './api';
 import './index.css';
-import { listPets, createPet } from './api';
 
+// X dialog
+// X state
+// api call
 const App = () => {
   const [pets, setPets] = useState([]);
   const [isNewPetOpen, setNewPetOpen] = useState(
     false
   );
+  const [currentPet, setCurrentPet] = useState(null);
   const [isLoading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -20,10 +25,21 @@ const App = () => {
       .finally(() => setLoading(false));
   }, []);
 
-  const addPet = async (pet) => {
+  const addPet = async pet => {
     return createPet(pet).then(newPet => {
       setPets([...pets, newPet]);
       setNewPetOpen(false);
+    });
+  };
+
+  const savePet = async pet => {
+    return updatePet(pet).then(updatedPet => {
+      setPets(pets =>
+        pets.map(pet =>
+          pet.id === updatedPet.id ? updatedPet : pet
+        )
+      );
+      setCurrentPet(null);
     });
   };
 
@@ -37,7 +53,13 @@ const App = () => {
           <ul>
             {pets.map(pet => (
               <li key={pet.id}>
-                <Pet pet={pet} />
+                <Pet
+                  pet={pet}
+                  onEdit={() => {
+                    console.log('set', pet);
+                    setCurrentPet(pet);
+                  }}
+                />
               </li>
             ))}
           </ul>
@@ -50,6 +72,13 @@ const App = () => {
         <NewPetModal
           onCancel={() => setNewPetOpen(false)}
           onSave={addPet}
+        />
+      )}
+      {currentPet && (
+        <EditPetModal
+          pet={currentPet}
+          onCancel={() => setCurrentPet(null)}
+          onSave={savePet}
         />
       )}
     </main>
